@@ -72,24 +72,31 @@ toggleButton.MouseButton1Click:Connect(function()
 end)
 
 --// FLING FUNCTIONALITY
+local function flingTarget(targetHRP)
+    if not flingEnabled or not targetHRP then return end
+    -- Create the BodyVelocity to fling the other player
+    local bodyVelocity = Instance.new("BodyVelocity")
+    -- Create a random direction for the fling
+    local direction = Vector3.new(math.random(-1, 1), math.random(0, 1), math.random(-1, 1))
+    if direction.Magnitude == 0 then
+        direction = Vector3.new(1, 0, 0)
+    end
+    -- Set the velocity and force of fling
+    bodyVelocity.Velocity = direction.Unit * flingSpeed
+    bodyVelocity.MaxForce = Vector3.new(1e5, 1e5, 1e5)
+    bodyVelocity.Parent = targetHRP
+    -- Clean up after fling (remove the force after 0.5 seconds)
+    game:GetService("Debris"):AddItem(bodyVelocity, 0.5)
+end
+
 local function onTouch(hit)
     if not flingEnabled then return end
     local hitParent = hit.Parent
+    -- Check if the touched part belongs to a player and has a humanoid
     if hitParent and hitParent ~= character and hitParent:FindFirstChild("Humanoid") then
-        -- Check if the touched object is another player
         local targetHRP = hitParent:FindFirstChild("HumanoidRootPart")
         if targetHRP then
-            local bodyVelocity = Instance.new("BodyVelocity")
-            -- generate a random direction vector (ensure it's not zero)
-            local direction = Vector3.new(math.random(-1,1), math.random(0,1), math.random(-1,1))
-            if direction.Magnitude == 0 then
-                direction = Vector3.new(1, 0, 0)
-            end
-            bodyVelocity.Velocity = direction.Unit * flingSpeed
-            bodyVelocity.MaxForce = Vector3.new(1e5, 1e5, 1e5)
-            bodyVelocity.Parent = targetHRP
-            -- Remove the force after a short duration
-            game:GetService("Debris"):AddItem(bodyVelocity, 0.5)
+            flingTarget(targetHRP)
         end
     end
 end
