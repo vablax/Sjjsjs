@@ -76,6 +76,7 @@ local function onTouch(hit)
     if not flingEnabled then return end
     local hitParent = hit.Parent
     if hitParent and hitParent ~= character and hitParent:FindFirstChild("Humanoid") then
+        -- Check if the touched object is another player
         local targetHRP = hitParent:FindFirstChild("HumanoidRootPart")
         if targetHRP then
             local bodyVelocity = Instance.new("BodyVelocity")
