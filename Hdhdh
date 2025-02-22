@@ -1,113 +1,37 @@
---// Futuristic Script Hub (LocalScript in StarterGui)
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+local gui = Instance.new("ScreenGui")
+gui.Parent = player:WaitForChild("PlayerGui")
 
-local Players = game:GetService("Players")
-local UserInputService = game:GetService("UserInputService")
-
-local player = Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
-
--- Create the ScreenGui
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "FuturisticHub"
-screenGui.Parent = playerGui
-
--- Main frame (using an ImageLabel to achieve the futuristic frame look)
-local mainFrame = Instance.new("ImageLabel")
-mainFrame.Name = "MainFrame"
-mainFrame.Parent = screenGui
-mainFrame.Size = UDim2.new(0, 400, 0, 250)
-mainFrame.Position = UDim2.new(0.5, -200, 0.5, -125)
-mainFrame.BackgroundTransparency = 1
-mainFrame.Image = "3785839597"  -- Replace with your futuristic frame image asset
-mainFrame.ScaleType = Enum.ScaleType.Stretch
-
--- Title bar
-local title = Instance.new("TextLabel")
-title.Name = "Title"
-title.Parent = mainFrame
-title.BackgroundTransparency = 1
-title.Size = UDim2.new(1, 0, 0, 30)
-title.Position = UDim2.new(0, 0, 0, 0)
-title.Text = "Futuristic Hub"
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.TextScaled = true
-title.Font = Enum.Font.GothamBold
-
--- Close button
-local closeButton = Instance.new("TextButton")
-closeButton.Name = "CloseButton"
-closeButton.Parent = mainFrame
-closeButton.Size = UDim2.new(0, 30, 0, 30)
-closeButton.Position = UDim2.new(1, -35, 0, 0)
-closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-closeButton.Text = "X"
-closeButton.TextScaled = true
-closeButton.Font = Enum.Font.GothamBold
-closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-
-closeButton.MouseButton1Click:Connect(function()
-	screenGui:Destroy()  -- Closes the GUI
-end)
-
--- Make the GUI draggable by dragging the title bar
-local dragging = false
-local dragInput
-local dragStart
-local startPos
-
-local function update(input)
-	local delta = input.Position - dragStart
-	mainFrame.Position = UDim2.new(
-		startPos.X.Scale,
-		startPos.X.Offset + delta.X,
-		startPos.Y.Scale,
-		startPos.Y.Offset + delta.Y
-	)
+-- Function to create fling bars
+local function createFlingBar(position)
+    local bar = Instance.new("Frame")
+    bar.Size = UDim2.new(0.2, 0, 0.05, 0)  -- Width and Height
+    bar.Position = position
+    bar.BackgroundColor3 = Color3.new(1, 0, 0) -- Red
+    bar.Parent = gui
+    
+    -- Create invisible part
+    local part = Instance.new("Part")
+    part.Size = Vector3.new(10, 1, 2)
+    part.Anchored = true
+    part.CanCollide = false
+    part.Transparency = 1
+    part.Parent = workspace
+    part.Position = Vector3.new(0, 5, 0)  -- Adjust position as needed
+    
+    -- Function to fling players
+    part.Touched:Connect(function(hit)
+        local character = hit.Parent
+        local humanoidRoot = character and character:FindFirstChild("HumanoidRootPart")
+        if humanoidRoot then
+            local force = Vector3.new(math.random(-100, 100), 200, math.random(-100, 100))
+            humanoidRoot.Velocity = force
+        end
+    end)
 end
 
-title.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		dragging = true
-		dragStart = input.Position
-		startPos = mainFrame.Position
-
-		-- Stop dragging when mouse is released
-		input.Changed:Connect(function()
-			if input.UserInputState == Enum.UserInputState.End then
-				dragging = false
-			end
-		end)
-	end
-end)
-
-title.InputChanged:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseMovement then
-		dragInput = input
-	end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-	if input == dragInput and dragging then
-		update(input)
-	end
-end)
-
--- Example button (Fling)
-local flingButton = Instance.new("TextButton")
-flingButton.Name = "FlingButton"
-flingButton.Parent = mainFrame
-flingButton.Size = UDim2.new(0, 100, 0, 30)
-flingButton.Position = UDim2.new(0, 10, 0, 50)
-flingButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-flingButton.BorderSizePixel = 0
-flingButton.Text = "Fling"
-flingButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-flingButton.TextScaled = true
-flingButton.Font = Enum.Font.Gotham
-
-flingButton.MouseButton1Click:Connect(function()
-	-- Put your fling script logic here
-	print("Fling script triggered!")
-end)
-
--- Add more buttons/scripts here as needed!
+-- Create multiple fling bars
+createFlingBar(UDim2.new(0.2, 0, 0.3, 0))
+createFlingBar(UDim2.new(0.5, 0, 0.5, 0))
+createFlingBar(UDim2.new(0.7, 0, 0.7, 0))
