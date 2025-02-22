@@ -18,7 +18,7 @@ mainFrame.Parent = screenGui
 mainFrame.Size = UDim2.new(0, 400, 0, 250)
 mainFrame.Position = UDim2.new(0.5, -200, 0.5, -125)
 mainFrame.BackgroundTransparency = 1
-mainFrame.Image = "84659878985703"  -- Replace with your futuristic frame image asset
+mainFrame.Image = "3785839597"  -- Replace with your futuristic frame image asset
 mainFrame.ScaleType = Enum.ScaleType.Stretch
 
 -- Title bar
